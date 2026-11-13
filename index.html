@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1427"><title>T-STORE OSINT</title>
+<style>
+:root{--bg:#0b1427;--panel:#1c2940;--line:#34445d;--txt:#f1f5ff;--muted:#aab7cc;--cyan:#55dce8;--gold:#ffd36e}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#18385c 0,transparent 40%),var(--bg);color:var(--txt);font:16px/1.55 system-ui,Arial,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:22px}nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px}.logo{font-size:1.25rem;font-weight:950;letter-spacing:1.4px}.logo span{color:var(--cyan)}a{color:inherit;text-decoration:none}
+.btn{display:inline-flex;justify-content:center;align-items:center;padding:11px 16px;border:0;border-radius:11px;background:linear-gradient(100deg,#4ce0e8,#77a6ff);color:#061321;font-weight:900;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.hero{padding:20px 0 26px}.eyebrow{color:var(--cyan);font-size:.75rem;letter-spacing:2px;font-weight:850}.hero h1{font-size:clamp(2.3rem,6vw,4rem);line-height:1.03;margin:10px 0}.hero h1 span{color:var(--cyan)}.muted{color:var(--muted)}
+.form-panel{background:linear-gradient(145deg,#14243b,#101c30);border:1px solid #2c405c;border-radius:22px;padding:clamp(18px,4vw,34px);box-shadow:0 22px 65px #0005}
+.field{margin-bottom:25px}.field label{display:block;font-size:1.3rem;font-weight:650;margin:0 0 10px}
+select{width:100%;appearance:none;-webkit-appearance:none;background-color:#202d43;color:#f3f6ff;border:2px solid #34465f;border-radius:25px;padding:20px 58px 20px 22px;font:inherit;font-size:clamp(1.05rem,3.5vw,1.55rem);outline:none;cursor:pointer;transition:.2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23dce8f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 20px center}
+select:focus{border-color:var(--cyan);box-shadow:0 0 0 4px #55dce822}select:disabled{opacity:.5;cursor:not-allowed}option{background:#18263b;color:#fff}
+.result{display:none;margin-top:8px;padding:19px;background:#101e32;border:1px solid #304661;border-radius:16px;animation:slide .25s ease}.result.show{display:block}.result h3{margin:0 0 5px}.price{color:var(--gold);font-weight:900}.result p{color:var(--muted);margin:10px 0 16px}.notice{margin:18px 0;padding:13px 15px;border-radius:12px;background:#302713;border:1px solid #6c592d;color:#ffe6aa;font-size:.87rem}
+.pay{margin-top:28px;display:grid;grid-template-columns:1fr 220px;gap:18px;align-items:center}.qr{width:100%;max-width:200px;padding:8px;background:#fff;border-radius:13px;display:block;margin:auto}.qrbox{text-align:center}.qrbox p{font-size:.85rem;color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.secondary{background:#202f46;color:#fff;border:1px solid #3a506c}
+footer{border-top:1px solid #2c405c;margin-top:32px;padding:20px 0;color:var(--muted);font-size:.88rem;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@keyframes slide{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){.wrap{padding:17px}.pay{grid-template-columns:1fr}.qr{max-width:190px}.field label{font-size:1.15rem}select{border-radius:20px;padding:17px 52px 17px 18px}}
+</style></head>
+<body><div class="wrap">
+<nav><div class="logo">T-STORE <span>OSINT</span></div><a class="btn" href="https://wa.me/6289519097381">Hubungi Admin</a></nav>
+<header class="hero"><div class="eyebrow">OPEN SOURCE INTELLIGENCE • DIGITAL SERVICES</div><h1>Pilih Layanan<br><span>T-STORE OSINT</span></h1><p class="muted">Platform layanan riset digital dan informasi publik. Pilih kategori layanan untuk melihat pilihan yang tersedia.</p><a class="btn" href="#visi-misi">Lihat Visi & Misi</a></header>
+<section class="form-panel" aria-label="Form pilihan layanan">
+<div class="field"><label for="category">Kategori</label><select id="category"><option value="">Pilih kategori...</option></select></div>
+<div class="field"><label for="service">Menu layanan</label><select id="service" disabled><option value="">Pilih kategori terlebih dahulu...</option></select></div>
+<div id="detail" class="result" aria-live="polite"><h3 id="detailName"></h3><div id="detailPrice" class="price"></div><p id="detailDesc"></p><button id="bayarSekarang" class="btn" type="button" style="width:100%">Bayar</button></div>
+<div class="notice"><b>Privasi & penggunaan yang sah:</b> layanan hanya untuk informasi publik, aset milik sendiri, atau pemeriksaan dengan izin. Tidak tersedia pengambilan data pribadi tanpa izin, pembuatan identitas palsu, akses CCTV tanpa otorisasi, atau spam/OTP bombing.</div>
+</section>
+<section id="visi-misi" class="form-panel" style="margin-bottom:22px">
+<div class="eyebrow">TENTANG T-STORE OSINT</div>
+<h2 style="margin:8px 0 18px">Visi & Misi</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+<div style="padding:17px;border:1px solid #344b67;border-radius:14px;background:#182941">
+<div style="color:var(--cyan);font-weight:850;letter-spacing:1px">VISI</div>
+<h3 style="margin:7px 0">Menjadi platform informasi digital yang terpercaya</h3>
+<p class="muted" style="margin:0;font-size:.9rem">Mendorong pemanfaatan informasi publik dan teknologi digital secara bijak, aman, transparan, serta bertanggung jawab.</p>
+</div>
+<div style="padding:17px;border:1px solid #344b67;border-radius:14px;background:#182941">
+<div style="color:var(--cyan);font-weight:850;letter-spacing:1px">MISI</div>
+<ul class="muted" style="margin:8px 0 0;padding-left:19px;font-size:.9rem">
+<li>Menyediakan katalog layanan riset sumber terbuka yang mudah dipahami.</li>
+<li>Mengedepankan privasi, keamanan, dan penggunaan data yang sah.</li>
+<li>Membantu pengguna memahami informasi digital dari sumber yang dapat dipertanggungjawabkan.</li>
+<li>Memberikan informasi layanan dan dukungan pengguna secara responsif.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section id="pembayaran" class="form-panel" style="margin-top:22px;display:none">
+  <div class="eyebrow">PEMBAYARAN T-STORE</div>
+  <h2 style="margin:8px 0 10px">Metode Pembayaran</h2>
+  <p class="muted" style="margin:0 0 20px">Silakan pilih salah satu metode pembayaran. Setelah transfer, kirim bukti pembayaran kepada admin untuk konfirmasi.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;align-items:start">
+    <div style="padding:18px;border:1px solid #344b67;border-radius:16px;background:#202f46">
+      <div class="eyebrow">E-WALLET & TRANSFER BANK</div>
+      <h3 style="margin:8px 0 14px">Atas nama: GAGAT GINATA</h3>
+      <div style="border-top:1px solid #40516a;padding-top:12px;margin-top:10px">
+        <div class="muted">GoPay</div>
+        <div style="font-size:1.35rem;font-weight:900;letter-spacing:.5px">081952545612</div>
+      </div>
+      <div style="border-top:1px solid #40516a;padding-top:12px;margin-top:12px">
+        <div class="muted">Bank Jago</div>
+        <div style="font-size:1.35rem;font-weight:900;letter-spacing:.5px;overflow-wrap:anywhere">100312192749</div>
+      </div>
+    </div>
+    <div style="padding:16px;border-radius:16px;background:#fff;color:#182235;text-align:center">
+      <h3 style="margin:0 0 12px">SCAN QRIS T-STORE</h3>
+      <a href="https://h.top4top.io/p_3968udx2p0.jpeg" target="_blank" rel="noopener">
+        <img src="https://h.top4top.io/p_3968udx2p0.jpeg" alt="QRIS pembayaran T-STORE" style="display:block;width:100%;max-width:260px;height:auto;margin:auto;border-radius:10px">
+      </a>
+      <p style="color:#526071;margin:12px 0">Scan dengan aplikasi pembayaran yang mendukung QRIS.</p>
+      <a class="btn" style="width:100%" href="https://h.top4top.io/p_3968udx2p0.jpeg" target="_blank" rel="noopener">Perbesar QRIS</a>
+    </div>
+  </div>
+  <a class="btn" style="width:100%;margin-top:18px" href="https://wa.me/6289519097381?text=Halo%20Admin%20T-STORE%2C%20saya%20ingin%20konfirmasi%20pembayaran.%20Berikut%20saya%20akan%20mengirimkan%20bukti%20pembayaran." target="_blank" rel="noopener">Konfirmasi Pembayaran ke Admin</a>
+</section>
+
+<footer><span>© 2026 T-STORE OSINT</span><span>Admin: <a href="https://wa.me/6289519097381">089519097381</a></span></footer>
+</div>
+<script>
+const data=[
+{category:"MENU OSINT",price:"Rp10.000",items:[
+["NOMOR KE DATA","Validasi format nomor dan informasi operator yang tersedia secara publik."],
+["NOMOR KE NIK","Tidak melayani pencarian NIK pribadi. Tersedia panduan verifikasi melalui kanal resmi."],
+["NIK KE NOMOR","Tidak mencari nomor pribadi dari NIK."],
+["NIK DATA V1","Tidak membuka basis data kependudukan. Gunakan layanan administrasi resmi."],
+["NIK DATA V2","Panduan memahami format data yang Anda miliki sendiri."],
+["NIK PARSE","Penjelasan struktur data yang diberikan pengguna."],
+["TELE KE NOMOR","Pemeriksaan informasi akun Telegram yang bersifat publik."],
+["EMAIL KE HP","Tidak mencari nomor pribadi dari alamat email."],
+["HP KE EMAIL","Tidak mencari email pribadi dari nomor telepon."],
+["EMAIL BREACH","Panduan memeriksa paparan akun sendiri dan mitigasi keamanan."],
+["LEAK NAMA","Tidak menyediakan data bocor; konsultasi risiko paparan data."],
+["WHATSAPP","Panduan keamanan dan verifikasi akun WhatsApp."],
+["E-WALLET","Panduan keamanan dan verifikasi e-wallet melalui kanal resmi."],
+["KODE POS","Pencarian kode pos wilayah."],
+["GETCONTECT NOMOR","Bantuan mengelola kontak milik sendiri."],
+["GETCONTECT TAG","Bantuan mengelola tag kontak milik sendiri."]]},
+{category:"MENU LEMBAGA",price:"Rp10.000",items:[
+["FILE SEKOLAH","Pencarian dokumen sekolah yang dipublikasikan secara resmi."],
+["FAKE KTP","Tidak membuat atau mengedit identitas palsu."],
+["NAMA SEKOLAH","Pencarian nama dan informasi sekolah dari sumber publik."],
+["NAMA GURU","Penelusuran profil profesional yang dipublikasikan resmi."],
+["PROFIL GURU","Informasi profil profesional guru dari sumber terbuka."],
+["PROFIL SISWA","Tidak menyediakan profil pribadi siswa."],
+["NAMA SISWA","Tidak menyediakan pencarian data pribadi siswa."],
+["PROFIL MPR","Informasi profil anggota/lembaga MPR yang dipublikasikan resmi."],
+["NAMA MPR","Pencarian nama anggota MPR dari sumber resmi."],
+["KEMENKES","Pencarian informasi dan publikasi resmi Kementerian Kesehatan."],
+["VAKSIN","Informasi program vaksin melalui kanal kesehatan resmi."],
+["KARTU NIKAH","Panduan administrasi kartu nikah melalui kanal resmi."],
+["DATA NPSN","Pencarian data referensi sekolah/NPSN yang tersedia untuk umum."]]},
+{category:"MENU TRACK",price:"Rp10.000",items:[
+["CCTV","Panduan memasang dan mengamankan CCTV milik sendiri."],
+["CEK RESI","Panduan cek status kiriman melalui situs resmi ekspedisi."],
+["CEK IMEI","Panduan pemeriksaan IMEI perangkat sendiri melalui kanal resmi."],
+["CEK IP/DOMAIN","Pemeriksaan informasi teknis IP/domain yang tersedia publik."],
+["CEK DOMAIN","Pemeriksaan DNS, registrar, dan konfigurasi domain."],
+["DOMAIN BREACH","Pemeriksaan paparan domain milik sendiri dan mitigasi."],
+["CEK LOOKUP","Lookup DNS/IP publik untuk administrasi dan keamanan."]]},
+{category:"MENU SPAM",price:"Rp10.000",items:[
+["SPAM OTP","Tidak menyediakan OTP bombing; konsultasi pencegahan serangan OTP."],
+["SPAM OTP TELEGRAM","Panduan mengamankan Telegram dari permintaan OTP berulang."],
+["SPAM NGL","Panduan blokir dan laporkan pesan NGL yang mengganggu."],
+["SPAM TELE","Panduan mitigasi dan pelaporan spam telepon/pesan."]]},
+{category:"MENU DIGITAL",price:"Rp1.000",items:[
+["SOSMED","Pemeriksaan informasi akun media sosial yang bersifat publik."],
+["TIKTOK","Informasi konten atau profil TikTok publik."],
+["INSTAGRAM","Pemeriksaan profil dan konten Instagram publik."],
+["TWITTER / X","Pemeriksaan profil dan postingan publik di X."],
+["TIKTOK SAVE","Menyimpan konten yang diizinkan pemiliknya."],
+["YOUTUBE","Pencarian kanal, video, dan informasi publik YouTube."],
+["HARI LAHIR","Perhitungan hari lahir berdasarkan tanggal yang diberikan."],
+["CEK JODOH","Kalkulator kecocokan untuk hiburan."],
+["TEMP MAIL","Email sementara untuk pengujian yang sah."],
+["TEKS KE SUARA","Mengubah teks menjadi suara."],
+["TEKS KE FOTO","Membuat visual dari teks atau prompt."],
+["SS WEBSITE","Tangkapan layar halaman website publik."],
+["SPAM BOT","Tidak menyediakan bot spam; konsultasi otomasi pesan berbasis persetujuan."]]}
+];
+const category=document.getElementById('category'),service=document.getElementById('service'),detail=document.getElementById('detail');
+const paymentSection=document.getElementById('pembayaran');
+const paymentIntro=paymentSection.querySelector('p.muted');
+let selectedOrder='';
+data.forEach((group,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=group.category;category.append(option)});
+category.addEventListener('change',()=>{
+ service.innerHTML='<option value="">Pilih produk...</option>';
+ detail.classList.remove('show');
+ paymentSection.style.display='none';
+ if(category.value===""){service.disabled=true;service.innerHTML='<option value="">Pilih kategori terlebih dahulu...</option>';return}
+ const group=data[Number(category.value)];
+ group.items.forEach((item,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=item[0];service.append(option)});
+ service.disabled=false;
+});
+service.addEventListener('change',()=>{
+ if(service.value===""){detail.classList.remove('show');return}
+ const group=data[Number(category.value)],item=group.items[Number(service.value)];
+ document.getElementById('detailName').textContent=item[0];
+ document.getElementById('detailPrice').textContent=group.price;
+ document.getElementById('detailDesc').textContent=item[1];
+ detail.classList.remove('show');void detail.offsetWidth;detail.classList.add('show');
+ selectedOrder=`${item[0]} — ${group.price}`;
+ paymentSection.style.display='none';
+});
+
+document.getElementById('bayarSekarang').addEventListener('click',()=>{
+ if(!selectedOrder) return;
+ paymentIntro.textContent=`Pesanan dipilih: ${selectedOrder}. Silakan pilih QRIS, GoPay, atau Bank Jago, lalu kirim bukti pembayaran kepada admin untuk konfirmasi.`;
+ paymentSection.style.display='block';
+ paymentSection.scrollIntoView({behavior:'smooth',block:'start'});
+});
+</script></body></html>
